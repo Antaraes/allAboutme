@@ -115,10 +115,7 @@ export const skillsData = {
       title: "Adobe PhotoShop",
       icon: "skill-icons:photoshop",
     },
-    {
-      title: "Spline",
-      icon: "",
-    },
+
     {
       title: "Adobe Premiere Pro",
       icon: "simple-icons:adobepremierepro",
