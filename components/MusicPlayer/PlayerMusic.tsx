@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { Card, CardBody, Button, Slider } from "@nextui-org/react";
+import { Card, CardBody, Button, Slider, Tooltip } from "@nextui-org/react";
 import { HeartIcon } from "./HeartIcon";
 import { PauseCircleIcon } from "./PauseCircleIcon";
 import { NextIcon } from "./NextIcon";
@@ -10,6 +10,8 @@ import { ShuffleIcon } from "./Shuffelcon";
 import albums from "@/assets/images/albums.jpeg";
 import Image from "next/image";
 import { PlayCricleIcon } from "./PlayCricleIcon";
+import WaveSurfer from "wavesurfer.js";
+import { motion, AnimatePresence } from "framer-motion";
 import { formatDuration } from "@/utils/formatter";
 
 export default function PlayerMusic() {
@@ -19,6 +21,7 @@ export default function PlayerMusic() {
   const [currentTime, setCurrentTime] = useState(0);
 
   const audioRef = useRef<HTMLAudioElement>(new Audio("/song1.mp3"));
+
   useEffect(() => {
     audioRef.current
       .play()
@@ -50,116 +53,86 @@ export default function PlayerMusic() {
 
   const handleTimeUpdate = () => {
     setCurrentTime(audioRef.current.currentTime);
-    setDuration(audioRef.current.duration);
+    setDuration(audioRef.current.duration - audioRef.current.currentTime);
   };
   const handleSeek = (newValue: any) => {
     audioRef.current.currentTime = newValue;
     setCurrentTime(newValue);
   };
+  const handleRepeat = () => {
+    audioRef.current.currentTime = 0;
+    audioRef.current.play();
+    setIsPlaying(true);
+  };
 
   return (
-    <Card
-      isBlurred
-      className="border-none bg-background/60 dark:bg-default-100/50 max-w-full"
-      shadow="sm"
-    >
-      <CardBody>
-        <div className="grid grid-cols-6 md:grid-cols-12 gap-6 md:gap-4 items-center justify-center">
-          <div className="relative col-span-6 md:col-span-4">
-            <Image alt="Album cover" className="object-cover" height={200} src={albums} />
-          </div>
-
-          <div className="flex flex-col col-span-6 md:col-span-8">
-            <div className="flex justify-between items-start">
-              <div className="flex flex-col gap-0">
-                <h3 className="font-semibold text-foreground/90">Daily Mix</h3>
-                <p className="text-small text-foreground/80">12 Tracks</p>
-                <h1 className="text-large font-medium mt-2">Frontend Radio</h1>
+    <AnimatePresence>
+      <motion.div>
+        <Card isBlurred className="border-none bg-background  max-w-full p-5 " shadow="sm">
+          <CardBody>
+            <div className="grid grid-cols-6 md:grid-cols-12 gap-6 md:gap-4 items-center justify-center ">
+              <div className="relative col-span-6 md:col-span-4">
+                <Image alt="Album cover" className="object-cover" height={200} src={albums} />
               </div>
-              <Button
-                isIconOnly
-                className="text-default-900/60 data-[hover]:bg-foreground/10 -translate-y-2 translate-x-2"
-                radius="full"
-                variant="light"
-                onPress={() => setLiked((v) => !v)}
-              >
-                <HeartIcon
-                  width={10}
-                  height={10}
-                  className={liked ? "[&>path]:stroke-transparent" : ""}
-                  fill={liked ? "currentColor" : "none"}
-                />
-              </Button>
-            </div>
 
-            <div className="flex flex-col mt-3 gap-1">
-              <Slider
-                aria-label="Music progress"
-                classNames={{
-                  track: "bg-default-500/30",
-                  thumb: "w-2 h-2 after:w-2 after:h-2 after:bg-foreground",
-                }}
-                color="foreground"
-                value={currentTime}
-                onChange={handleSeek}
-                size="sm"
-              />
-              <div className="flex justify-between">
-                <p className="text-small">{formatDuration(currentTime)}</p>
-                <p className="text-small text-foreground/50">{formatDuration(duration)}</p>
+              <div className="flex flex-col col-span-6 md:col-span-8">
+                <div className="flex justify-between items-start">
+                  <Tooltip
+                    showArrow={true}
+                    content="Download Song"
+                    className="text-black"
+                  ></Tooltip>
+                </div>
+                <audio src="/song1.mp3"></audio>
+
+                <div className="flex flex-col mt-3 gap-1">
+                  <Slider
+                    aria-label="Music progress"
+                    classNames={{
+                      track: "bg-default-500/30",
+                      thumb: "w-2 h-2 after:w-2 after:h-2 after:bg-foreground",
+                    }}
+                    color="foreground"
+                    value={currentTime}
+                    onChange={handleSeek}
+                    size="sm"
+                  />
+                  <div className="flex justify-between">
+                    <p className="text-small">{formatDuration(currentTime)}</p>
+                    <p className="text-small text-foreground/50">{formatDuration(duration)}</p>
+                  </div>
+                </div>
+
+                <div className="flex w-full items-center justify-center">
+                  <Button
+                    isIconOnly
+                    className="data-[hover]:bg-foreground/10"
+                    radius="full"
+                    variant="light"
+                    onClick={handleRepeat}
+                  >
+                    <RepeatOneIcon width={10} height={10} className="text-foreground/80" />
+                  </Button>
+
+                  <Button
+                    isIconOnly
+                    className="w-auto h-auto data-[hover]:bg-foreground/10"
+                    radius="full"
+                    variant="light"
+                    onClick={togglePlay}
+                  >
+                    {isPlaying ? (
+                      <PauseCircleIcon width={10} height={10} size={54} />
+                    ) : (
+                      <PlayCricleIcon width={10} height={10} size={54} />
+                    )}
+                  </Button>
+                </div>
               </div>
             </div>
-
-            <div className="flex w-full items-center justify-center">
-              <Button
-                isIconOnly
-                className="data-[hover]:bg-foreground/10"
-                radius="full"
-                variant="light"
-              >
-                <RepeatOneIcon width={10} height={10} className="text-foreground/80" />
-              </Button>
-              <Button
-                isIconOnly
-                className="data-[hover]:bg-foreground/10"
-                radius="full"
-                variant="light"
-              >
-                <PreviousIcon width={10} height={10} />
-              </Button>
-              <Button
-                isIconOnly
-                className="w-auto h-auto data-[hover]:bg-foreground/10"
-                radius="full"
-                variant="light"
-                onClick={togglePlay}
-              >
-                {isPlaying ? (
-                  <PauseCircleIcon width={10} height={10} size={54} />
-                ) : (
-                  <PlayCricleIcon width={10} height={10} size={54} />
-                )}
-              </Button>
-              <Button
-                isIconOnly
-                className="data-[hover]:bg-foreground/10"
-                radius="full"
-                variant="light"
-              >
-                <NextIcon width={10} height={10} />
-              </Button>
-              <Button
-                isIconOnly
-                className="data-[hover]:bg-foreground/10"
-                radius="full"
-                variant="light"
-              >
-                <ShuffleIcon width={10} height={10} className="text-foreground/80" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </CardBody>
-    </Card>
+          </CardBody>
+        </Card>
+      </motion.div>
+    </AnimatePresence>
   );
 }
