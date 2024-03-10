@@ -9,6 +9,11 @@ const nextConfig = {
         hostname: "aceternity.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        port: "",
+      },
     ],
   },
 };
