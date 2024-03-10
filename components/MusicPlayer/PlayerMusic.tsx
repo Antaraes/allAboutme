@@ -10,7 +10,6 @@ import { ShuffleIcon } from "./Shuffelcon";
 import albums from "@/assets/images/albums.jpeg";
 import Image from "next/image";
 import { PlayCricleIcon } from "./PlayCricleIcon";
-import WaveSurfer from "wavesurfer.js";
 import { formatDuration } from "@/utils/formatter";
 
 export default function PlayerMusic() {
