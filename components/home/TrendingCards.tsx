@@ -1,11 +1,13 @@
-import { FC } from "react";
-import { Card, CardHeader, CardBody, CardFooter, Button } from "@nextui-org/react";
+import { FC, Suspense } from "react";
+import { Card, CardHeader, CardBody, CardFooter, Button, Spinner } from "@nextui-org/react";
 import currentProject from "@/assets/images/current.jpg";
 import playerMusic from "@/assets/images/playerMusic.png";
 import Announce from "@/assets/images/announcet.png";
 import Image from "next/image";
-import PlayerMusic from "../MusicPlayer/PlayerMusic";
+// import PlayerMusic from "../MusicPlayer/PlayerMusic";
+import dynamic from "next/dynamic";
 interface TrendingCardsProps {}
+const PlayerMusic = dynamic(() => import("../MusicPlayer/PlayerMusic"), { ssr: false });
 
 const TrendingCards: FC<TrendingCardsProps> = ({}) => {
   return (
@@ -67,7 +69,9 @@ const TrendingCards: FC<TrendingCardsProps> = ({}) => {
         isFooterBlurred
         className="w-full h-full flex items-center justify-center col-span-12 sm:col-span-7"
       >
-        <PlayerMusic />
+        <Suspense fallback={<Spinner />}>
+          <PlayerMusic />
+        </Suspense>
       </Card>
     </div>
   );

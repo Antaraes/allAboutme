@@ -18,7 +18,7 @@ export default function PlayerMusic() {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
 
-  const audioRef = useRef<HTMLAudioElement>(new Audio("/song1.mp3")!);
+  const audioRef = useRef<HTMLAudioElement>(new Audio("/song1.mp3"));
 
   useEffect(() => {
     audioRef.current.addEventListener("timeupdate", handleTimeUpdate);
