@@ -19,7 +19,21 @@ export default function PlayerMusic() {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
 
-  const audioRef = useRef(new Audio("/song.wav"));
+  const audioRef = useRef<HTMLAudioElement>(new Audio("/song1.mp3"));
+  useEffect(() => {
+    audioRef.current
+      .play()
+      .then(() => {
+        setIsPlaying(true);
+      })
+      .catch((error) => {
+        console.error("Error playing audio:", error);
+      });
+
+    return () => {
+      audioRef.current.pause();
+    };
+  }, []);
   useEffect(() => {
     audioRef.current.addEventListener("timeupdate", handleTimeUpdate);
     return () => {
